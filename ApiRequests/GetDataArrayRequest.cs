@@ -2,27 +2,27 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace wadbsrv.SqlApiRequests
+namespace wadbsrv.ApiRequests
 {
-    public class SqlGetDataArrayRequest : SqlApiRequest
+    public class GetDataArrayRequest : ApiRequest
     {
-        public SqlGetDataArrayRequest(SqlRequestId requestId, string query, int expectedColumns)
+        public GetDataArrayRequest(RequestId requestId, string query, int expectedColumns)
         {
             RequestId = requestId;
             Query = query;
             ExpectedColumns = expectedColumns;
         }
 
-        private SqlGetDataArrayRequest(SqlPackedApiRequest packedRequest)
+        private GetDataArrayRequest(PackedApiRequest packedRequest)
         {
-            RequestId = packedRequest.SqlRequestId;
+            RequestId = packedRequest.RequestId;
             Query = packedRequest.Query;
             ExpectedColumns = packedRequest.ExpectedColumns;
         }
 
-        public static SqlGetDataArrayRequest Create(SqlPackedApiRequest packedRequest)
+        public static GetDataArrayRequest Create(PackedApiRequest packedRequest)
         {
-            return new SqlGetDataArrayRequest(packedRequest);
+            return new GetDataArrayRequest(packedRequest);
         }
 
         public override void Process(SqlClient client)

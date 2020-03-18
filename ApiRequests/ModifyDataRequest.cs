@@ -2,27 +2,27 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace wadbsrv.SqlApiRequests
+namespace wadbsrv.ApiRequests
 {
-    public class SqlModifyDataRequest : SqlApiRequest
+    public class ModifyDataRequest : ApiRequest
     {
-        public SqlModifyDataRequest(SqlRequestId requestId, string query)
+        public ModifyDataRequest(RequestId requestId, string query)
         {
             RequestId = requestId;
             Query = query;
             ExpectedColumns = 0;
         }
 
-        private SqlModifyDataRequest(SqlPackedApiRequest packedRequest)
+        private ModifyDataRequest(PackedApiRequest packedRequest)
         {
-            RequestId = packedRequest.SqlRequestId;
+            RequestId = packedRequest.RequestId;
             Query = packedRequest.Query;
             ExpectedColumns = 0;
         }
 
-        public static SqlModifyDataRequest Create(SqlPackedApiRequest packedRequest)
+        public static ModifyDataRequest Create(PackedApiRequest packedRequest)
         {
-            return new SqlModifyDataRequest(packedRequest);
+            return new ModifyDataRequest(packedRequest);
         }
 
         public override void Process(SqlClient client)

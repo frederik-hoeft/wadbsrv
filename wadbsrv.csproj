@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="SqlApiRequests\SqlApiRequest.cs~RF2627200.TMP" />
-    <None Remove="SqlApiRequests\SqlApiRequest.cs~RFc613c2.TMP" />
-    <None Remove="SqlApiRequests\SqlApiRequestBase.cs~RF71ba7a.TMP" />
+    <None Remove="ApiRequests\SqlApiRequest.cs~RF2627200.TMP" />
+    <None Remove="ApiRequests\SqlApiRequest.cs~RFc613c2.TMP" />
+    <None Remove="ApiRequests\SqlApiRequestBase.cs~RF71ba7a.TMP" />
   </ItemGroup>
 
   <ItemGroup>

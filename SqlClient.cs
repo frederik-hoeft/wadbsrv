@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Text;
-using wadbsrv.SqlApiRequests;
+using wadbsrv.ApiRequests;
 using washared;
 
 namespace wadbsrv
@@ -62,8 +62,8 @@ namespace wadbsrv
         private void PacketActionCallback(byte[] packet)
         {
             string json = Encoding.UTF8.GetString(packet);
-            SqlPackedApiRequest packedApiRequest = JsonConvert.DeserializeObject<SqlPackedApiRequest>(json);
-            SqlApiRequest apiRequest = packedApiRequest.Unpack();
+            PackedApiRequest packedApiRequest = JsonConvert.DeserializeObject<PackedApiRequest>(json);
+            ApiRequest apiRequest = packedApiRequest.Unpack();
             apiRequest.Process(this);
         }
 

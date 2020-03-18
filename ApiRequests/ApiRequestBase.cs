@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace wadbsrv.SqlApiRequests
+namespace wadbsrv.ApiRequests
 {
     /// <summary>
     /// Base class for all SQL API Requests
     /// </summary>
-    public class SqlApiRequestBase
+    public class ApiRequestBase
     {
-        public SqlRequestId RequestId;
+        public RequestId RequestId;
         public string Query;
         public int ExpectedColumns;
     }

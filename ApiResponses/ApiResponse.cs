@@ -3,11 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace wadbsrv.SqlApiResponses
+namespace wadbsrv.ApiResponses
 {
-    public abstract class SqlApiResponse
+    public abstract class ApiResponse
     {
-        public SqlResponseId ResponseId;
+        public ResponseId ResponseId;
 
         /// <summary>
         /// Serializes the current object to a Json string.
