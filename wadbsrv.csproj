@@ -1,8 +1,24 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SqlApiRequests\SqlApiRequest.cs~RFc613c2.TMP" />
+    <None Remove="SqlApiRequests\SqlApiRequestBase.cs~RF71ba7a.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.112" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="washared">
+      <HintPath>..\washared\bin\Release\netcoreapp3.1\washared.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>
