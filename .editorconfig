@@ -1,0 +1,7 @@
+﻿[*.cs]
+
+# CA1031: Do not catch general exception types
+dotnet_diagnostic.CA1031.severity = none
+
+# AD0001: Analyzer Failure
+dotnet_diagnostic.AD0001.severity = none

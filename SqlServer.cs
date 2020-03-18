@@ -1,42 +1,97 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using System.Threading;
+using wadbsrv.ApiRequests;
+using washared;
 
 namespace wadbsrv
 {
-    public static class SqlServer
+    public class SqlServer: Client, IDisposable
     {
-        public static int ClientCount = 0;
-        public static readonly int Port = 11000;
-        private const string certFileName = @"L:\Programming\C#\wamsrv\bin\Debug\netcoreapp3.1\cert.pem";
-        public static X509Certificate ServerCertificate;
-
-        public static void Run()
+        public override Network Network { get => base.Network; }
+        public override SslStream SslStream { get => base.SslStream; }
+        private readonly NetworkStream networkStream;
+        private readonly Socket socket;
+        private SqlServer(Socket socket)
         {
-            ServerCertificate = X509Certificate.CreateFromCertFile(certFileName);
-            IPHostEntry ipHostInfo = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress ipAddress = ipHostInfo.AddressList.FirstOrDefault();
-            if (ipAddress == null)
+            this.socket = socket;
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+            socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 10);
+            socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 5);
+            socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 6);
+            networkStream = new NetworkStream(socket);
+            SslStream = new SslStream(networkStream);
+            SslStream.AuthenticateAsServer(MainServer.ServerCertificate, true, System.Security.Authentication.SslProtocols.Tls12, true);
+            Network = new Network(this);
+        }
+#nullable enable
+        public static void Create(Socket? socket)
+        {
+            if (socket == null)
             {
-                Console.WriteLine("Unable to resolve IP address.");
+                MainServer.ClientCount--;
                 return;
             }
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, Port);
-            using Socket socket = new Socket(ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-            socket.Bind(localEndPoint);
-            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            socket.Listen(16);
-            while (true)
+            SqlServer server = new SqlServer(socket);
+            server.Serve();
+        }
+
+        private void Serve()
+        {
+            using PacketParser parser = new PacketParser(this)
             {
-                Socket clientSocket = socket.Accept();
-                ClientCount++;
-                new Thread(() => SqlClient.Create(clientSocket)).Start();
+                PacketActionCallback = PacketActionCallback,
+                UseMultiThreading = true,
+                ReleaseResources = true,
+                Interactive = false
+            };
+            try
+            {
+                parser.BeginParse();
             }
+            catch (ConnectionDroppedException)
+            {
+                parser.Dispose();
+                Dispose();
+            }
+        }
+
+        private void PacketActionCallback(byte[] packet)
+        {
+            string json = Encoding.UTF8.GetString(packet);
+            PackedApiRequest packedApiRequest = JsonConvert.DeserializeObject<PackedApiRequest>(json);
+            ApiRequest apiRequest = packedApiRequest.Unpack();
+            apiRequest.Process(this);
+        }
+
+        public void Dispose()
+        {
+            MainServer.ClientCount--;
+            try
+            {
+                SslStream.Close();
+                SslStream.Dispose();
+            }
+            catch (ObjectDisposedException) { }
+            try
+            {
+                networkStream.Close();
+                networkStream.Dispose();
+            }
+            catch (ObjectDisposedException) { }
+            try
+            {
+                if (socket.Connected)
+                {
+                    socket.Shutdown(SocketShutdown.Both);
+                    socket.Disconnect(false);
+                }
+                socket.Close();
+            }
+            catch (ObjectDisposedException) { }
         }
     }
 }

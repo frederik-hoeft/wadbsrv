@@ -27,13 +27,13 @@ namespace wadbsrv.ApiRequests
             return new Get2DArrayRequest(packedRequest);
         }
 
-        public override async void Process(SqlClient client)
+        public override async void Process(SqlServer server)
         {
             string[][] result = await DatabaseManager.GetDataAs2DArray(Query, ExpectedColumns);
-            Get2DArrayResponse get2DArrayResponse = Get2DArrayResponse.Create(result);
-            SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(get2DArrayResponse);
+            Get2DArrayResponse response = Get2DArrayResponse.Create(result);
+            SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
             string data = serializedApiResponse.Serialize();
-            client.Network.Send(data);
+            server.Network.Send(data);
         }
     }
 }

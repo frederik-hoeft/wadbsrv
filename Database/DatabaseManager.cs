@@ -11,6 +11,7 @@ namespace wadbsrv.Database
     /// </summary>
     public static class DatabaseManager
     {
+        // TODO: return error messaged as API response
         // TODO: outsource
         private const string connectionString = "Data Source=" + @"Resources\localdata_windows.db";
 

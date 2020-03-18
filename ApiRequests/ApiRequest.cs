@@ -9,6 +9,6 @@ namespace wadbsrv.ApiRequests
     /// </summary>
     public abstract class ApiRequest : ApiRequestBase
     {
-        public abstract void Process(SqlClient client);
+        public abstract void Process(SqlServer server);
     }
 }

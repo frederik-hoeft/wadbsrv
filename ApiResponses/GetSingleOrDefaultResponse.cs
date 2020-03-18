@@ -7,7 +7,6 @@ namespace wadbsrv.ApiResponses
     public class GetSingleOrDefaultResponse : ApiResponse
     {
         public readonly string Result;
-        public readonly bool Success;
         [Obsolete("Only used for JSON parsing. Use GetSingleOrDefaultResponse.Create() instead.")]
         public GetSingleOrDefaultResponse(ResponseId responseId, string result, bool success)
         {
@@ -19,7 +18,7 @@ namespace wadbsrv.ApiResponses
         public static GetSingleOrDefaultResponse Create(string result)
         {
 #pragma warning disable CS0618 // Type or member is obsolete
-            return new GetSingleOrDefaultResponse(ResponseId.GetSingleOrDefault, result, !result.Equals(string.Empty));
+            return new GetSingleOrDefaultResponse(ResponseId.GetSingleOrDefault, result, !string.IsNullOrEmpty(result));
 #pragma warning restore CS0618 // Type or member is obsolete
         }
     }

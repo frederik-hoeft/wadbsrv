@@ -8,6 +8,7 @@ namespace wadbsrv.ApiResponses
     public abstract class ApiResponse
     {
         public ResponseId ResponseId;
+        public bool Success;
 
         /// <summary>
         /// Serializes the current object to a Json string.

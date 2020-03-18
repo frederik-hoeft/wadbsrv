@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using wadbsrv.ApiResponses;
+using wadbsrv.Database;
 
 namespace wadbsrv.ApiRequests
 {
@@ -25,9 +27,13 @@ namespace wadbsrv.ApiRequests
             return new GetDataArrayRequest(packedRequest);
         }
 
-        public override void Process(SqlClient client)
+        public override async void Process(SqlServer server)
         {
-            throw new NotImplementedException();
+            string[] result = await DatabaseManager.GetDataArray(Query, ExpectedColumns);
+            GetDataArrayResponse response = GetDataArrayResponse.Create(result);
+            SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
+            string data = serializedApiResponse.Serialize();
+            server.Network.Send(data);
         }
     }
 }
