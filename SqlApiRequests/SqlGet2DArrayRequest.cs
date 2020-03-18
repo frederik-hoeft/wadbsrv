@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using wadbsrv.Database;
+using wadbsrv.SqlApiResponses;
 
 namespace wadbsrv.SqlApiRequests
 {
@@ -25,9 +27,11 @@ namespace wadbsrv.SqlApiRequests
             return new SqlGet2DArrayRequest(packedRequest);
         }
 
-        public override void Process(SqlClient client)
+        public override async void Process(SqlClient client)
         {
-            throw new NotImplementedException();
+            string[][] result = await DatabaseManager.GetDataAs2DArray(Query, ExpectedColumns);
+            SqlGet2DArrayResponse get2DArrayResponse = SqlGet2DArrayResponse.Create(result);
+            SqlSerializedApiResponse serializedApiResponse = SqlSerializedApiResponse.Create(get2DArrayResponse);
         }
     }
 }
