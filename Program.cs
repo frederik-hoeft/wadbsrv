@@ -2,7 +2,8 @@
 using System;
 using System.Threading;
 using wadbsrv.ApiRequests;
-using wadbsrv.ApiResponses;
+using washared.DatabaseServer;
+using washared.DatabaseServer.ApiResponses;
 
 namespace wadbsrv
 {

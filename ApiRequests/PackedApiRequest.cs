@@ -1,18 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using washared.DatabaseServer;
+using washared.DatabaseServer.ApiRequests;
 
 namespace wadbsrv.ApiRequests
 {
     /// <summary>
     /// SQL API Request wrapper class. Can hold any SQL API Request.
     /// </summary>
-    public class PackedApiRequest
+    public class PackedApiRequest : ApiRequestBase
     {
-        public readonly RequestId RequestId;
-        public readonly string Query;
-        public readonly int ExpectedColumns;
-
         [Obsolete("Only used for JSON parsing. Use PackedApiRequest.Pack() instead.")]
         public PackedApiRequest(RequestId sqlRequestId, string query, int expectedColumns)
         {
@@ -39,12 +37,5 @@ namespace wadbsrv.ApiRequests
                 _ => null
             };
         }
-    }
-    public enum RequestId
-    {
-        Get2DArray = 0,
-        GetDataArray = 1,
-        GetSingleOrDefault = 2,
-        ModifyData = 3
     }
 }

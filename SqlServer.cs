@@ -9,7 +9,7 @@ using washared;
 
 namespace wadbsrv
 {
-    public class SqlServer: Client, IDisposable
+    public class SqlServer: Server, IDisposable
     {
         public override Network Network { get => base.Network; }
         public override SslStream SslStream { get => base.SslStream; }

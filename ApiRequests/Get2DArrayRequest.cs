@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using wadbsrv.Database;
-using wadbsrv.ApiResponses;
+using washared.DatabaseServer;
+using washared.DatabaseServer.ApiResponses;
 
 namespace wadbsrv.ApiRequests
 {
