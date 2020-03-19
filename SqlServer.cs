@@ -9,7 +9,7 @@ using washared;
 
 namespace wadbsrv
 {
-    public class SqlServer: Server, IDisposable
+    public class SqlServer: NetworkInterface, IDisposable
     {
         public override Network Network { get => base.Network; }
         public override SslStream SslStream { get => base.SslStream; }
@@ -21,7 +21,7 @@ namespace wadbsrv
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
             socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveTime, 10);
             socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 5);
-            socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveRetryCount, 6);
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.TcpKeepAliveRetryCount, 6);
             networkStream = new NetworkStream(socket);
             SslStream = new SslStream(networkStream);
             SslStream.AuthenticateAsServer(MainServer.ServerCertificate, true, System.Security.Authentication.SslProtocols.Tls12, true);
@@ -41,6 +41,7 @@ namespace wadbsrv
 
         private void Serve()
         {
+            Console.WriteLine("Client connected.");
             using PacketParser parser = new PacketParser(this)
             {
                 PacketActionCallback = PacketActionCallback,
@@ -57,10 +58,12 @@ namespace wadbsrv
                 parser.Dispose();
                 Dispose();
             }
+            Console.WriteLine("Client disconnected.");
         }
 
         private void PacketActionCallback(byte[] packet)
         {
+            Console.WriteLine("PacketActionCallback!");
             string json = Encoding.UTF8.GetString(packet);
             PackedApiRequest packedApiRequest = JsonConvert.DeserializeObject<PackedApiRequest>(json);
             ApiRequest apiRequest = packedApiRequest.Unpack();

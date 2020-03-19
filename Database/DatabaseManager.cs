@@ -13,7 +13,7 @@ namespace wadbsrv.Database
     {
         // TODO: return error messages as API response
         // TODO: outsource
-        private const string connectionString = "Data Source=" + @"Resources\localdata_windows.db";
+        private const string connectionString = "Data Source=" + @"wa.db";
 
         #region Database Access
         /// <summary>

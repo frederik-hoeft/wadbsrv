@@ -34,6 +34,10 @@ namespace wadbsrv.ApiRequests
             GetDataArrayResponse response = GetDataArrayResponse.Create(result);
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
             string data = serializedApiResponse.Serialize();
+            if (server.Network == null)
+            {
+                throw new NullReferenceException();
+            }
             server.Network.Send(data);
         }
     }
