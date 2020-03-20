@@ -22,12 +22,18 @@
 
   <ItemGroup>
     <Reference Include="washared">
-      <HintPath>..\washared\bin\Release\netcoreapp3.1\win-x64\washared.dll</HintPath>
+      <HintPath>..\washared\bin\Release\netcoreapp3.1\washared.dll</HintPath>
     </Reference>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="certificate.pfx">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="wa.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="wadbsrv.config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

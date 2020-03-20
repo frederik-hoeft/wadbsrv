@@ -1,37 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using washared.DatabaseServer.ApiResponses;
 using wadbsrv.Database;
 using washared.DatabaseServer;
-using washared.DatabaseServer.ApiResponses;
 
 namespace wadbsrv.ApiRequests
 {
-    public class Get2DArrayRequest : ApiRequest
+    public class SqlSingleOrDefaultRequest : ApiRequest
     {
-        public Get2DArrayRequest(RequestId requestId, string query, int expectedColumns)
+        public SqlSingleOrDefaultRequest(RequestId requestId, string query, int expectedColumns)
         {
             RequestId = requestId;
             Query = query;
             ExpectedColumns = expectedColumns;
         }
 
-        private Get2DArrayRequest(PackedApiRequest packedRequest)
+        private SqlSingleOrDefaultRequest(PackedApiRequest packedRequest)
         {
             RequestId = packedRequest.RequestId;
             Query = packedRequest.Query;
             ExpectedColumns = packedRequest.ExpectedColumns;
         }
 
-        public static Get2DArrayRequest Create(PackedApiRequest packedRequest)
+        public static SqlSingleOrDefaultRequest Create(PackedApiRequest packedRequest)
         {
-            return new Get2DArrayRequest(packedRequest);
+            return new SqlSingleOrDefaultRequest(packedRequest);
         }
 
         public override async void Process(SqlServer server)
         {
-            string[][] result = await DatabaseManager.GetDataAs2DArray(Query, ExpectedColumns);
-            Get2DArrayResponse response = Get2DArrayResponse.Create(result);
+            string result = await DatabaseManager.GetSingleOrDefault(Query);
+            SqlSingleOrDefaultResponse response = SqlSingleOrDefaultResponse.Create(result);
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
             string data = serializedApiResponse.Serialize();
             server.Network.Send(data);

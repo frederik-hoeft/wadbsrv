@@ -7,31 +7,31 @@ using washared.DatabaseServer;
 
 namespace wadbsrv.ApiRequests
 {
-    public class ModifyDataRequest : ApiRequest
+    public class SqlModifyDataRequest : ApiRequest
     {
-        public ModifyDataRequest(RequestId requestId, string query)
+        public SqlModifyDataRequest(RequestId requestId, string query)
         {
             RequestId = requestId;
             Query = query;
             ExpectedColumns = 0;
         }
 
-        private ModifyDataRequest(PackedApiRequest packedRequest)
+        private SqlModifyDataRequest(PackedApiRequest packedRequest)
         {
             RequestId = packedRequest.RequestId;
             Query = packedRequest.Query;
             ExpectedColumns = 0;
         }
 
-        public static ModifyDataRequest Create(PackedApiRequest packedRequest)
+        public static SqlModifyDataRequest Create(PackedApiRequest packedRequest)
         {
-            return new ModifyDataRequest(packedRequest);
+            return new SqlModifyDataRequest(packedRequest);
         }
 
         public override async void Process(SqlServer server)
         {
             int result = await DatabaseManager.ModifyData(Query);
-            ModifyDataResponse response = ModifyDataResponse.Create(result);
+            SqlModifyDataResponse response = SqlModifyDataResponse.Create(result);
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
             string data = serializedApiResponse.Serialize();
             server.Network.Send(data);

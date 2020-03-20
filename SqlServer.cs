@@ -1,8 +1,10 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using wadbsrv.ApiRequests;
 using washared;
@@ -15,6 +17,18 @@ namespace wadbsrv
         public override SslStream SslStream { get => base.SslStream; }
         private readonly NetworkStream networkStream;
         private readonly Socket socket;
+
+        private static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            if (sslPolicyErrors == SslPolicyErrors.None || MainServer.Config.SuppressCertificateErrors)
+            {
+                return true;
+            }
+
+            Debug.WriteLine("Certificate error: {0}", sslPolicyErrors);
+            return false;
+        }
+
         private SqlServer(Socket socket)
         {
             this.socket = socket;
@@ -23,8 +37,8 @@ namespace wadbsrv
             socket.SetSocketOption(SocketOptionLevel.Tcp, SocketOptionName.TcpKeepAliveInterval, 5);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.TcpKeepAliveRetryCount, 6);
             networkStream = new NetworkStream(socket);
-            SslStream = new SslStream(networkStream);
-            SslStream.AuthenticateAsServer(MainServer.ServerCertificate, true, System.Security.Authentication.SslProtocols.Tls12, true);
+            SslStream = new SslStream(networkStream, false, new RemoteCertificateValidationCallback(ValidateServerCertificate));
+            SslStream.AuthenticateAsServer(MainServer.ServerCertificate, true, System.Security.Authentication.SslProtocols.None, true);
             Network = new Network(this);
         }
 #nullable enable
@@ -46,7 +60,7 @@ namespace wadbsrv
             {
                 PacketActionCallback = PacketActionCallback,
                 UseMultiThreading = true,
-                ReleaseResources = true,
+                ReleaseResources = false,
                 Interactive = false
             };
             try
@@ -55,15 +69,16 @@ namespace wadbsrv
             }
             catch (ConnectionDroppedException)
             {
-                parser.Dispose();
-                Dispose();
+                Debug.WriteLine("Connection dropped.");
             }
+            parser.Dispose();
+            Dispose();
             Console.WriteLine("Client disconnected.");
         }
 
         private void PacketActionCallback(byte[] packet)
         {
-            Console.WriteLine("PacketActionCallback!");
+            Debug.WriteLine("PacketActionCallback!");
             string json = Encoding.UTF8.GetString(packet);
             PackedApiRequest packedApiRequest = JsonConvert.DeserializeObject<PackedApiRequest>(json);
             ApiRequest apiRequest = packedApiRequest.Unpack();

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Diagnostics;
 using System.Threading;
 using wadbsrv.ApiRequests;
 using washared.DatabaseServer;
@@ -11,6 +12,8 @@ namespace wadbsrv
     {
         static void Main(string[] args)
         {
+            Debug.WriteLine("Started main!");
+            MainServer.LoadConfig();
             MainServer.Run();
         }
     }

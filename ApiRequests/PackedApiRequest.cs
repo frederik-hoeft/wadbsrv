@@ -30,10 +30,10 @@ namespace wadbsrv.ApiRequests
         {
             return RequestId switch
             {
-                RequestId.Get2DArray => Get2DArrayRequest.Create(this),
-                RequestId.GetDataArray => GetDataArrayRequest.Create(this),
-                RequestId.GetSingleOrDefault => GetSingleOrDefaultRequest.Create(this),
-                RequestId.ModifyData => ModifyDataRequest.Create(this),
+                RequestId.Get2DArray => Sql2DArrayRequest.Create(this),
+                RequestId.GetDataArray => SqlDataArrayRequest.Create(this),
+                RequestId.GetSingleOrDefault => SqlSingleOrDefaultRequest.Create(this),
+                RequestId.ModifyData => SqlModifyDataRequest.Create(this),
                 _ => null
             };
         }
