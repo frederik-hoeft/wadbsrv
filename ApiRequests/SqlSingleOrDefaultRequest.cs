@@ -9,7 +9,7 @@ namespace wadbsrv.ApiRequests
 {
     public class SqlSingleOrDefaultRequest : ApiRequest
     {
-        public SqlSingleOrDefaultRequest(RequestId requestId, string query, int expectedColumns)
+        public SqlSingleOrDefaultRequest(SqlRequestId requestId, string query, int expectedColumns)
         {
             RequestId = requestId;
             Query = query;

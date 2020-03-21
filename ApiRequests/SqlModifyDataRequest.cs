@@ -9,7 +9,7 @@ namespace wadbsrv.ApiRequests
 {
     public class SqlModifyDataRequest : ApiRequest
     {
-        public SqlModifyDataRequest(RequestId requestId, string query)
+        public SqlModifyDataRequest(SqlRequestId requestId, string query)
         {
             RequestId = requestId;
             Query = query;

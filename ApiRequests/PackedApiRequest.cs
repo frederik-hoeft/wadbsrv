@@ -12,7 +12,7 @@ namespace wadbsrv.ApiRequests
     public class PackedApiRequest : ApiRequestBase
     {
         [Obsolete("Only used for JSON parsing. Use PackedApiRequest.Pack() instead.")]
-        public PackedApiRequest(RequestId sqlRequestId, string query, int expectedColumns)
+        public PackedApiRequest(SqlRequestId sqlRequestId, string query, int expectedColumns)
         {
             RequestId = sqlRequestId;
             Query = query;
@@ -30,10 +30,10 @@ namespace wadbsrv.ApiRequests
         {
             return RequestId switch
             {
-                RequestId.Get2DArray => Sql2DArrayRequest.Create(this),
-                RequestId.GetDataArray => SqlDataArrayRequest.Create(this),
-                RequestId.GetSingleOrDefault => SqlSingleOrDefaultRequest.Create(this),
-                RequestId.ModifyData => SqlModifyDataRequest.Create(this),
+                SqlRequestId.Get2DArray => Sql2DArrayRequest.Create(this),
+                SqlRequestId.GetDataArray => SqlDataArrayRequest.Create(this),
+                SqlRequestId.GetSingleOrDefault => SqlSingleOrDefaultRequest.Create(this),
+                SqlRequestId.ModifyData => SqlModifyDataRequest.Create(this),
                 _ => null
             };
         }

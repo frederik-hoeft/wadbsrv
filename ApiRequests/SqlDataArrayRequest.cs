@@ -9,7 +9,7 @@ namespace wadbsrv.ApiRequests
 {
     public class SqlDataArrayRequest : ApiRequest
     {
-        public SqlDataArrayRequest(RequestId requestId, string query, int expectedColumns)
+        public SqlDataArrayRequest(SqlRequestId requestId, string query, int expectedColumns)
         {
             RequestId = requestId;
             Query = query;

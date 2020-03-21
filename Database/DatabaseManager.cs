@@ -25,6 +25,7 @@ namespace wadbsrv.Database
         public static async Task<string[]> GetDataArray(string query, int columns)
         {
             string[] data = new string[columns];
+            bool readData = false;
             using (DatabaseThreadWatcher _ = new DatabaseThreadWatcher())
             using (SQLiteConnection sqlConnection = new SQLiteConnection(connectionString))
             {
@@ -43,6 +44,7 @@ namespace wadbsrv.Database
                     {
                         for (int i = 0; i < columns; i++)
                         {
+                            if (!readData) readData = true;
                             data[i] = reader[i].ToString();
                         }
                     }
@@ -54,7 +56,7 @@ namespace wadbsrv.Database
                 }
                 sqlConnection.Close();
             }
-            return data;
+            return readData ? data : Array.Empty<string>();
         }
         /// <summary>
         /// Returns result of SQLite database query as 2d string array.
@@ -65,6 +67,7 @@ namespace wadbsrv.Database
         public static async Task<string[][]> GetDataAs2DArray(string query, int columns)
         {
             List<string[]> outerList = new List<string[]>();
+            bool readData = false;
             using (DatabaseThreadWatcher _ = new DatabaseThreadWatcher())
             using (SQLiteConnection sqlConnection = new SQLiteConnection(connectionString))
             {
@@ -84,6 +87,7 @@ namespace wadbsrv.Database
                         string[] row = new string[columns];
                         for (int i = 0; i < columns; i++)
                         {
+                            if (!readData) readData = true;
                             row[i] = reader[i].ToString();
                         }
                         outerList.Add(row);
@@ -95,7 +99,7 @@ namespace wadbsrv.Database
                     }
                 }
             }
-            return outerList.ToArray();
+            return readData ? outerList.ToArray() : Array.Empty<string[]>();
         }
         /// <summary>
         /// Returns result of SQLite database query as string or empty string if the query returns nothing.
