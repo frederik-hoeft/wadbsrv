@@ -3,5 +3,7 @@
   "PfxCertificatePath": "certificate.pfx",
   "PfxPassword": "test",
   "LocalIpAddress": "192.168.178.21",
-  "SuppressCertificateErrors": true
+  "SuppressCertificateErrors": true,
+  "SQLiteDatabasePath": "L:\\Programming\\C#\\wa_backend\\wadbsrv\\bin\\Debug\\netcoreapp3.1\\wa_dev.db",
+  "DebuggingEnabled": false
 }

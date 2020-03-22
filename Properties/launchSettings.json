@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "wadbsrv": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

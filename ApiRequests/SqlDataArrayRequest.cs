@@ -30,14 +30,19 @@ namespace wadbsrv.ApiRequests
 
         public override async void Process(SqlServer server)
         {
-            string[] result = await DatabaseManager.GetDataArray(Query, ExpectedColumns);
-            SqlDataArrayResponse response = SqlDataArrayResponse.Create(result);
+            SqlPacket packet = await DatabaseManager.GetDataArray(Query, ExpectedColumns);
+            ApiResponse response;
+            if (packet.Success)
+            {
+                string[] result = (string[])packet.Data;
+                response = SqlDataArrayResponse.Create(result);
+            }
+            else
+            {
+                response = SqlErrorResponse.Create(packet.ErrorMessage);
+            }
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
             string data = serializedApiResponse.Serialize();
-            if (server.Network == null)
-            {
-                throw new NullReferenceException();
-            }
             server.Network.Send(data);
         }
     }

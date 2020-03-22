@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+using wadbsrv.Database;
 using washared;
 
 namespace wadbsrv
@@ -46,6 +47,7 @@ namespace wadbsrv
             string config = File.ReadAllText("wadbsrv.config.json");
             Config = JsonConvert.DeserializeObject<WadbsrvConfig>(config);
             ServerCertificate = new X509Certificate2(Config.PfxCertificatePath, Config.PfxPassword);
+            DatabaseManager.connectionString = $"Data Source={Config.SQLiteDatabasePath}";
         }
     }
 }
