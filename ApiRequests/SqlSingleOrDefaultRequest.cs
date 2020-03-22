@@ -30,8 +30,17 @@ namespace wadbsrv.ApiRequests
 
         public override async void Process(SqlServer server)
         {
-            string result = await DatabaseManager.GetSingleOrDefault(Query);
-            SqlSingleOrDefaultResponse response = SqlSingleOrDefaultResponse.Create(result);
+            SqlPacket packet = await DatabaseManager.GetSingleOrDefault(Query);
+            ApiResponse response;
+            if (packet.Success)
+            {
+                string result = (string)packet.Data;
+                response = SqlSingleOrDefaultResponse.Create(result);
+            }
+            else
+            {
+                response = SqlErrorResponse.Create(packet.ErrorMessage);
+            }
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
             string data = serializedApiResponse.Serialize();
             server.Network.Send(data);

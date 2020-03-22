@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Data.SQLite;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,8 +13,7 @@ namespace wadbsrv.Database
     public static class DatabaseManager
     {
         // TODO: return error messages as API response
-        // TODO: outsource
-        private const string connectionString = "Data Source=" + @"wa.db";
+        public static string connectionString { get; set; } = null;
 
         #region Database Access
         /// <summary>
@@ -22,7 +22,7 @@ namespace wadbsrv.Database
         /// <param name="query">SQLite query to be executed.</param>
         /// <param name="columns">Number of columns returned by query.</param>
         /// <returns></returns>
-        public static async Task<string[]> GetDataArray(string query, int columns)
+        public static async Task<SqlPacket> GetDataArray(string query, int columns)
         {
             string[] data = new string[columns];
             bool readData = false;
@@ -36,7 +36,14 @@ namespace wadbsrv.Database
                 // SQL Injection checks are running on main server.
                 sqlCommand.CommandText = query;
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-                await sqlCommand.ExecuteNonQueryAsync();
+                try
+                {
+                    await sqlCommand.ExecuteNonQueryAsync();
+                }
+                catch (DbException ex)
+                {
+                    return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error: '" + ex.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
+                }
                 using SQLiteDataReader reader = (SQLiteDataReader)await sqlCommand.ExecuteReaderAsync();
                 while (reader.Read())
                 {
@@ -50,13 +57,12 @@ namespace wadbsrv.Database
                     }
                     catch (IndexOutOfRangeException outOfRange)
                     {
-                        Console.WriteLine("Error 'Reader out of range' occured: '{0}'\nTried to execute the following query: \"" + query + "\"", outOfRange);
-                        return Array.Empty<string>();
+                        return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error 'Reader out of range' occured: '" + outOfRange.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
                     }
                 }
                 sqlConnection.Close();
             }
-            return readData ? data : Array.Empty<string>();
+            return SqlPacket.Create(readData ? data : Array.Empty<string>());
         }
         /// <summary>
         /// Returns result of SQLite database query as 2d string array.
@@ -64,7 +70,7 @@ namespace wadbsrv.Database
         /// <param name="query">SQLite query to be executed.</param>
         /// <param name="columns">Number of columns returned by query.</param>
         /// <returns></returns>
-        public static async Task<string[][]> GetDataAs2DArray(string query, int columns)
+        public static async Task<SqlPacket> GetDataAs2DArray(string query, int columns)
         {
             List<string[]> outerList = new List<string[]>();
             bool readData = false;
@@ -78,7 +84,14 @@ namespace wadbsrv.Database
                 // SQL Injection checks are running on main server.
                 sqlCommand.CommandText = query;
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-                await sqlCommand.ExecuteNonQueryAsync();
+                try
+                {
+                    await sqlCommand.ExecuteNonQueryAsync();
+                }
+                catch (DbException ex)
+                {
+                    return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error: '" + ex.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
+                }
                 using SQLiteDataReader reader = (SQLiteDataReader)await sqlCommand.ExecuteReaderAsync();
                 while (reader.Read())
                 {
@@ -94,19 +107,18 @@ namespace wadbsrv.Database
                     }
                     catch (IndexOutOfRangeException outOfRange)
                     {
-                        Console.WriteLine("Error 'Reader out of range' occured: '{0}'\nTried to execute the following query: \"" + query + "\"", outOfRange);
-                        return Array.Empty<string[]>();
+                        return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error 'Reader out of range' occured: '" + outOfRange.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
                     }
                 }
             }
-            return readData ? outerList.ToArray() : Array.Empty<string[]>();
+            return SqlPacket.Create(readData ? outerList.ToArray() : Array.Empty<string[]>());
         }
         /// <summary>
         /// Returns result of SQLite database query as string or empty string if the query returns nothing.
         /// </summary>
         /// <param name="query">SQLite query to be executed.</param>
         /// <returns></returns>
-        public static async Task<string> GetSingleOrDefault(string query)
+        public static async Task<SqlPacket> GetSingleOrDefault(string query)
         {
             string returnData = string.Empty;
             using (DatabaseThreadWatcher _ = new DatabaseThreadWatcher())
@@ -119,7 +131,14 @@ namespace wadbsrv.Database
                 // SQL Injection checks are running on main server.
                 sqlCommand.CommandText = query;
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-                await sqlCommand.ExecuteNonQueryAsync();
+                try
+                {
+                    await sqlCommand.ExecuteNonQueryAsync();
+                }
+                catch (DbException ex)
+                {
+                    return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error: '" + ex.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
+                }
                 using SQLiteDataReader reader = (SQLiteDataReader)await sqlCommand.ExecuteReaderAsync();
                 while (reader.Read())
                 {
@@ -130,19 +149,18 @@ namespace wadbsrv.Database
                     }
                     catch (IndexOutOfRangeException outOfRange)
                     {
-                        Console.WriteLine("Error 'Reader out of range' occured: '{0}'\nTried to execute the following query: \"" + query + "\"", outOfRange);
-                        return string.Empty;
+                        return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error 'Reader out of range' occured: '" + outOfRange.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
                     }
                 }
             }
-            return returnData;
+            return SqlPacket.Create(returnData);
         }
         /// <summary>
         /// Executes a SQLite query to manipulate data.
         /// </summary>
         /// <param name="query">SQLite query to be executed.</param>
         /// <returns></returns>
-        public static async Task<int> ModifyData(string query)
+        public static async Task<SqlPacket> ModifyData(string query)
         {
             using DatabaseThreadWatcher _ = new DatabaseThreadWatcher();
             using SQLiteConnection sqlConnection = new SQLiteConnection(connectionString);
@@ -153,7 +171,15 @@ namespace wadbsrv.Database
             // SQL Injection checks are running on main server.
             sqlCommand.CommandText = query;
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-            return await sqlCommand.ExecuteNonQueryAsync();
+            try
+            {
+                int i = await sqlCommand.ExecuteNonQueryAsync();
+                return SqlPacket.Create(i);
+            }
+            catch (DbException ex)
+            {
+                return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error: '" + ex.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
+            }
         }
         #endregion
     }

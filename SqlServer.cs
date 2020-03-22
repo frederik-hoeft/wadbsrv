@@ -110,6 +110,11 @@ namespace wadbsrv
                 socket.Close();
             }
             catch (ObjectDisposedException) { }
+            try
+            {
+                socket.Dispose();
+            }
+            catch (ObjectDisposedException) { }
         }
     }
 }

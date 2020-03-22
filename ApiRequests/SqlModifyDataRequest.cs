@@ -4,6 +4,7 @@ using System.Text;
 using washared.DatabaseServer.ApiResponses;
 using wadbsrv.Database;
 using washared.DatabaseServer;
+using System.Diagnostics;
 
 namespace wadbsrv.ApiRequests
 {
@@ -30,8 +31,17 @@ namespace wadbsrv.ApiRequests
 
         public override async void Process(SqlServer server)
         {
-            int result = await DatabaseManager.ModifyData(Query);
-            SqlModifyDataResponse response = SqlModifyDataResponse.Create(result);
+            SqlPacket packet = await DatabaseManager.ModifyData(Query);
+            ApiResponse response;
+            if (packet.Success)
+            {
+                int result = (int)packet.Data;
+                response = SqlModifyDataResponse.Create(result);
+            }
+            else
+            {
+                response = SqlErrorResponse.Create(packet.ErrorMessage);
+            }
             SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
             string data = serializedApiResponse.Serialize();
             server.Network.Send(data);
