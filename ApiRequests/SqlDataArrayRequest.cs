@@ -41,7 +41,7 @@ namespace wadbsrv.ApiRequests
             {
                 response = SqlErrorResponse.Create(packet.ErrorMessage);
             }
-            SerializedApiResponse serializedApiResponse = SerializedApiResponse.Create(response);
+            SerializedSqlApiResponse serializedApiResponse = SerializedSqlApiResponse.Create(response);
             string data = serializedApiResponse.Serialize();
             server.Network.Send(data);
         }
