@@ -12,8 +12,25 @@ namespace wadbsrv.Database
     /// </summary>
     public static class DatabaseManager
     {
-        // TODO: return error messages as API response
         public static string connectionString { get; set; } = null;
+        private static SQLiteConnection sqlConnection;
+        private static SQLiteCommand sqlCommand;
+        private static bool setupComplete = false;
+
+        private static void Setup()
+        {
+            if (!setupComplete)
+            {
+                if (connectionString == null)
+                {
+                    throw new Exception("Call MainServer.LoadConfig first!");
+                }
+                sqlConnection = new SQLiteConnection(connectionString);
+                sqlConnection.Open();
+                sqlCommand = sqlConnection.CreateCommand();
+                setupComplete = true;
+            }
+        }
 
         #region Database Access
         /// <summary>
@@ -24,13 +41,12 @@ namespace wadbsrv.Database
         /// <returns></returns>
         public static async Task<SqlPacket> GetDataArray(string query, int columns)
         {
+            Setup();
             string[] data = new string[columns];
             bool readData = false;
             using (DatabaseThreadWatcher _ = new DatabaseThreadWatcher())
-            using (SQLiteConnection sqlConnection = new SQLiteConnection(connectionString))
             {
-                sqlConnection.Open();
-                using SQLiteCommand sqlCommand = sqlConnection.CreateCommand();
+                sqlCommand = sqlConnection.CreateCommand();
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
                 // Is secure: only main server instances can access the database server.
                 // SQL Injection checks are running on main server.
@@ -57,10 +73,9 @@ namespace wadbsrv.Database
                     }
                     catch (IndexOutOfRangeException outOfRange)
                     {
-                        return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error 'Reader out of range' occured: '" + outOfRange.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
+                        return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error 'Reader out of range' occurred: '" + outOfRange.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
                     }
                 }
-                sqlConnection.Close();
             }
             return SqlPacket.Create(readData ? data : Array.Empty<string>());
         }
@@ -72,13 +87,11 @@ namespace wadbsrv.Database
         /// <returns></returns>
         public static async Task<SqlPacket> GetDataAs2DArray(string query, int columns)
         {
+            Setup();
             List<string[]> outerList = new List<string[]>();
             bool readData = false;
             using (DatabaseThreadWatcher _ = new DatabaseThreadWatcher())
-            using (SQLiteConnection sqlConnection = new SQLiteConnection(connectionString))
             {
-                sqlConnection.Open();
-                using SQLiteCommand sqlCommand = sqlConnection.CreateCommand();
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
                 // Is secure: only main server instances can access the database server.
                 // SQL Injection checks are running on main server.
@@ -107,7 +120,7 @@ namespace wadbsrv.Database
                     }
                     catch (IndexOutOfRangeException outOfRange)
                     {
-                        return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error 'Reader out of range' occured: '" + outOfRange.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
+                        return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error 'Reader out of range' occurred: '" + outOfRange.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
                     }
                 }
             }
@@ -120,12 +133,10 @@ namespace wadbsrv.Database
         /// <returns></returns>
         public static async Task<SqlPacket> GetSingleOrDefault(string query)
         {
+            Setup();
             string returnData = string.Empty;
             using (DatabaseThreadWatcher _ = new DatabaseThreadWatcher())
-            using (SQLiteConnection sqlConnection = new SQLiteConnection(connectionString))
             {
-                sqlConnection.Open();
-                using SQLiteCommand sqlCommand = sqlConnection.CreateCommand();
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
                 // Is secure: only main server instances can access the database server.
                 // SQL Injection checks are running on main server.
@@ -149,7 +160,7 @@ namespace wadbsrv.Database
                     }
                     catch (IndexOutOfRangeException outOfRange)
                     {
-                        return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error 'Reader out of range' occured: '" + outOfRange.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
+                        return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error 'Reader out of range' occurred: '" + outOfRange.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
                     }
                 }
             }
@@ -162,10 +173,8 @@ namespace wadbsrv.Database
         /// <returns></returns>
         public static async Task<SqlPacket> ModifyData(string query)
         {
+            Setup();
             using DatabaseThreadWatcher _ = new DatabaseThreadWatcher();
-            using SQLiteConnection sqlConnection = new SQLiteConnection(connectionString);
-            sqlConnection.Open();
-            using SQLiteCommand sqlCommand = sqlConnection.CreateCommand();
 #pragma warning disable CA2100 // Review SQL queries for security vulnerabilities
             // Is secure: only main server instances can access the database server.
             // SQL Injection checks are running on main server.
