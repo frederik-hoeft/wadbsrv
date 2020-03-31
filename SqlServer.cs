@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Security;
 using System.Net.Sockets;
@@ -11,7 +10,7 @@ using washared;
 
 namespace wadbsrv
 {
-    public class SqlServer: NetworkInterface, IDisposable
+    public class SqlServer : NetworkInterface, IDisposable
     {
         public override Network Network { get => base.Network; }
         public override SslStream SslStream { get => base.SslStream; }
@@ -41,7 +40,9 @@ namespace wadbsrv
             SslStream.AuthenticateAsServer(MainServer.ServerCertificate, true, System.Security.Authentication.SslProtocols.None, true);
             Network = new Network(this);
         }
+
 #nullable enable
+
         public static void Create(Socket? socket)
         {
             if (socket == null)

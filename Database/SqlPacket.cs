@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace wadbsrv.Database
+﻿namespace wadbsrv.Database
 {
     public class SqlPacket
     {
         public readonly object Data;
         public readonly bool Success;
         public readonly string ErrorMessage;
+
         private SqlPacket(object data, bool success, string errorMessage)
         {
             Data = data;
@@ -20,6 +17,7 @@ namespace wadbsrv.Database
         {
             return new SqlPacket(data, true, string.Empty);
         }
+
         public static SqlPacket Create(object data, bool success, string errorMessage)
         {
             return new SqlPacket(data, success, errorMessage);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using wadbsrv.Database;
+﻿using wadbsrv.Database;
 using washared.DatabaseServer;
 using washared.DatabaseServer.ApiResponses;
 

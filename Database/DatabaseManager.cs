@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SQLite;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace wadbsrv.Database
@@ -33,6 +32,7 @@ namespace wadbsrv.Database
         }
 
         #region Database Access
+
         /// <summary>
         /// Returns result of SQLite database query as a string array.
         /// </summary>
@@ -79,6 +79,7 @@ namespace wadbsrv.Database
             }
             return SqlPacket.Create(readData ? data : Array.Empty<string>());
         }
+
         /// <summary>
         /// Returns result of SQLite database query as 2d string array.
         /// </summary>
@@ -126,6 +127,7 @@ namespace wadbsrv.Database
             }
             return SqlPacket.Create(readData ? outerList.ToArray() : Array.Empty<string[]>());
         }
+
         /// <summary>
         /// Returns result of SQLite database query as string or empty string if the query returns nothing.
         /// </summary>
@@ -166,6 +168,7 @@ namespace wadbsrv.Database
             }
             return SqlPacket.Create(returnData);
         }
+
         /// <summary>
         /// Executes a SQLite query to manipulate data.
         /// </summary>
@@ -190,6 +193,7 @@ namespace wadbsrv.Database
                 return SqlPacket.Create(null, false, MainServer.Config.DebuggingEnabled ? "Error: '" + ex.ToString() + "'\nTried to execute the following query: \'" + query + "\'" : string.Empty);
             }
         }
-        #endregion
+
+        #endregion Database Access
     }
 }

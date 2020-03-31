@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace wadbsrv
+﻿namespace wadbsrv
 {
     public class WadbsrvConfig
     {
@@ -13,6 +9,7 @@ namespace wadbsrv
         public readonly bool SuppressCertificateErrors;
         public readonly string SQLiteDatabasePath;
         public readonly bool DebuggingEnabled;
+
         public WadbsrvConfig(int localPort, string pfxCertificatePath, string pfxPassword, string localIpAddress, bool suppressCertificateErrors, string sqliteDatabasePath, bool debuggingEnabled)
         {
             LocalPort = localPort;

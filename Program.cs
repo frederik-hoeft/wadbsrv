@@ -1,17 +1,11 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Diagnostics;
-using System.Threading;
-using wadbsrv.ApiRequests;
+﻿using System.Diagnostics;
 using wadbsrv.Database;
-using washared.DatabaseServer;
-using washared.DatabaseServer.ApiResponses;
 
 namespace wadbsrv
 {
-    class Program
+    internal class Program
     {
-        static void Main()
+        private static void Main()
         {
             Debug.WriteLine("Started main!");
             MainServer.LoadConfig();
@@ -22,5 +16,5 @@ namespace wadbsrv
         {
             _ = await DatabaseManager.ModifyData("INSERT INTO Tbl_user (password, hid, email) VALUES (\'asdf\',\'asdf\',\'asdf\');");
         }
-    } 
+    }
 }
