@@ -79,7 +79,6 @@ namespace wadbsrv
 
         private void PacketActionCallback(byte[] packet)
         {
-            Debug.WriteLine("PacketActionCallback!");
             string json = Encoding.UTF8.GetString(packet);
             PackedApiRequest packedApiRequest = JsonConvert.DeserializeObject<PackedApiRequest>(json);
             ApiRequest apiRequest = packedApiRequest.Unpack();
