@@ -28,7 +28,7 @@ namespace wadbsrv
             socket.Bind(localEndPoint);
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             socket.Listen(16);
-            Console.WriteLine("MainServer started at " + ipAddress.ToString() + ":" + Config.LocalPort.ToString()); ;
+            Console.WriteLine("Database server started at " + ipAddress.ToString() + ":" + Config.LocalPort.ToString()); ;
             while (true)
             {
                 Socket clientSocket = socket.Accept();
